@@ -29,7 +29,7 @@ set scheme plotplainblind
 //========================================================
 
 local country_list "ARG THA GHA"  // change this
-local year_range "1990/2016"      // change this as a numlist (help nlist)
+local year_range "1990/2020"      // change this as a numlist (help nlist)
 
 
 /*==================================================
@@ -97,11 +97,13 @@ replace decile=10*decile*mean
 *----------2.2: create GIC
 levelsof countrycode, local(countries)
 gen g = .
+gen m = .
 foreach country of local countries {
 	local condif `"countrycode == "`country'""'
 	sum spell if `condif', meanonly
 	local sp = r(min)
 	replace g =(((decile/L`sp'.decile)^(1/`sp'))-1)*100	 if `condif'
+	replace m =(((mean/L`sp'.mean)^(1/`sp'))-1)*100	 if `condif'
 }
 
 /*==================================================
@@ -109,7 +111,7 @@ foreach country of local countries {
 ==================================================*/
 
 
-*##s
+
 *----------3.1: parametter
 local colors "sky turquoise reddish vermillion sea orangebrown" // help plotplainblind
 local pattern "solid" // help linepatternstyle
@@ -126,10 +128,13 @@ foreach country of local countries {
 	local color: word `c' of `colors'
 	
 	local condif `"countrycode == "`country'""'
+	sum m if (`condif')
+	local og = r(mean)
 	
 	// line
 	local gline (sc g dec if (`condif'), c(l) lpattern(`pattern') /* 
-	 */ lcolor(`color') mcolor(`color')  msymbol(`symbol'))
+	 */ lcolor(`color') mcolor(`color')  msymbol(`symbol') /* 
+	  */ yline(`og', lcolor(`color'%70)) )
 	global gic_lines "${gic_lines} `gline'"
 	
 	// Legend
@@ -142,14 +147,16 @@ foreach country of local countries {
 	
 }
 
-
-
 *----------3.3: Plot
-
+*##s
+sum g, meanonly
+local mg = r(max)*.95
 
 twoway ${gic_lines}, legend(order(${glegend}) rows(1) pos(6)) /* 
  */ ytitle("Annual growth in decile average income (%)",  size(small))  /* 
- */	xtitle("Decile group",  size(small))
+ */	xtitle("Decile group",  size(small)) text(`mg' 80 /* 
+ */ "Horizontal lines stand for" "annualized mean growth", placement(e) /* 
+	 */  color(gs9) size(vsmall))
 
 *##e
 

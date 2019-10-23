@@ -29,7 +29,7 @@ set scheme plotplainblind
 //========================================================
 
 local country_list "ARG THA GHA"  // change this
-local year_range "1990/2016"      // change this as a numlist (help nlist)
+local year_range "1990/2020"      // change this as a numlist (help nlist)
 
 
 /*==================================================
