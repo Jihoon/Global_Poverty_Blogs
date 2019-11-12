@@ -37,8 +37,16 @@ local year_range "1990/2020"      // change this as a numlist (help nlist)
 ==================================================*/
 
 *----------1.1:
-local rawcontent "https://raw.githubusercontent.com/"
-local metadata "`rawcontent'worldbank/povcalnet/master/metadata/povcalnet_metadata.dta"
+* local rawcontent "https://raw.githubusercontent.com/"
+* local metadata "`rawcontent'worldbank/povcalnet/master/metadata/povcalnet_comparability.dta"
+* import delimited using  "`rawcontent'worldbank/povcalnet/master/metadata/povcalnet_comparability.csv", clear
+
+local dh "https://development-data-hub-s3-public.s3.amazonaws.com/"
+import delimited using "`dh'ddhfiles/506801/povcalnet_comparability.csv", clear
+tempfile metadata
+save `metadata'
+
+
 povcalnet, clear
 merge 1:1 countrycode year coveragetype datatype using "`metadata'"
 
