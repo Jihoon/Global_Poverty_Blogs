@@ -8,19 +8,19 @@ library(ggthemes)
 # constants ----------------------------------------------------------------
 
 country_list <- c("ARG", "THA", "GHA")
-year_range <- 1990:2016
-metadata_path <- "https://raw.githubusercontent.com/worldbank/povcalnet/master/metadata/povcalnet_metadata.csv"
+year_range <- 1990:2020
+metadata_path <- "https://development-data-hub-s3-public.s3.amazonaws.com/ddhfiles/506801/povcalnet_comparability.csv"
 
+#metadata_path <- "https://raw.githubusercontent.com/worldbank/povcalnet/master/metadata/povcalnet_comparability.csv"
 
 # Load data ---------------------------------------------------------------
 
 metadata <- read_csv(metadata_path)
-cov_lkup <- c("National", "Urban", "Rural", "National (Aggregate)")
+cov_lkup <- c(3, 2, 1, 4)
 names(cov_lkup) <- c("N", "U", "R", "A")
-pcn <- povcalnet()
-pcn$coveragetype <- cov_lkup[pcn$coveragetype]
-pcn$datatype <- str_to_title(pcn$datatype)
 
+dat_lkup <- c(2,1)
+names(dat_lkup) <- c("income","consumption")
 
 # Data prep ---------------------------------------------------------------
 
@@ -39,7 +39,7 @@ df <- pcn %>%
     decile_value = 10 * decile_value * mean,
     decile = str_replace(decile, "decile", ""),
     decile = as.numeric(decile) * 10,
-    min_year = min(year), 
+    min_year = min(year),
     max_year = max(year),
   ) %>%
   group_by(countrycode, decile) %>%
