@@ -37,9 +37,6 @@ local year_range "1990/2020"      // change this as a numlist (help nlist)
 ==================================================*/
 
 *----------1.1:
-* local rawcontent "https://raw.githubusercontent.com/"
-* local metadata "`rawcontent'worldbank/povcalnet/master/metadata/povcalnet_comparability.dta"
-* import delimited using  "`rawcontent'worldbank/povcalnet/master/metadata/povcalnet_comparability.csv", clear
 
 local dh "https://development-data-hub-s3-public.s3.amazonaws.com/"
 import delimited using "`dh'ddhfiles/506801/povcalnet_comparability.csv", clear
@@ -155,4 +152,15 @@ Notes:
 
 Version Control:
 
+* to send for publication
+keep year gini code_break
+reshape wide gini, i(code_break) j(year)
+rename code_break series
+replace series = "Argentina (1991-2002)" if series == "ARG1"
+replace series = "Argentina (2003-2017)" if series == "ARG2"
+replace series = "Thailand (1990-1999)" if series == "THA1"
+replace series = "Thailand (2000-2013)" if series == "THA2"
+replace series = "Thailand (2014-2017)" if series == "THA3"
+replace series = "Ghana (1991-2016)" if series == "GHA1"
 
+rename gini* y*

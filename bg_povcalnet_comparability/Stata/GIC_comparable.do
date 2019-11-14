@@ -37,9 +37,6 @@ local year_range "1990/2020"      // change this as a numlist (help nlist)
 ==================================================*/
 
 *----------1.1:
-* local rawcontent "https://raw.githubusercontent.com/"
-* local metadata "`rawcontent'worldbank/povcalnet/master/metadata/povcalnet_comparability.dta"
-* import delimited using  "`rawcontent'worldbank/povcalnet/master/metadata/povcalnet_comparability.csv", clear
 
 local dh "https://development-data-hub-s3-public.s3.amazonaws.com/"
 import delimited using "`dh'ddhfiles/506801/povcalnet_comparability.csv", clear
@@ -113,6 +110,10 @@ foreach country of local countries {
 	replace m =(((mean/L`sp'.mean)^(1/`sp'))-1)*100	 if `condif'
 }
 
+label var g "Annualized GIC"
+label var m "Annualized growth of the mean"
+
+
 /*==================================================
 3:  Chart
 ==================================================*/
@@ -182,4 +183,29 @@ Notes:
 
 Version Control:
 
+* to send for publication in blog
+keep countrycode countryname m g dec
+drop if missing(g,m)
+gen period = ""
+replace period = cond(countrycode == "ARG", "2003-2017", /* 
+             */  cond(countrycode == "GHA", "1991-2016", "2000-2013"))
+
+reshape wide g m, i(countryname period) j(dec)
+drop countrycode
+
+preserve 
+
+keep countryname period g*
+rename g* d*
+gen measure = "GIC"
+tempfile gic
+save `gic'
+
+restore
+
+keep countryname period m*
+rename m* d*
+gen measure = "Annualized growoth of the mean"
+
+append using `gic'
 
