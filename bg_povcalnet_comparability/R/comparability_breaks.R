@@ -32,7 +32,7 @@ pcn$datatype <- dat_lkup[pcn$datatype]
 
 df <- pcn %>%
   inner_join(metadata, by = c("countrycode", "year", "coveragetype", "datatype")) %>%
-  filter(countrycode %in% country_list,
+  filter(#countrycode %in% country_list,
          year %in% year_range) %>%
   mutate(
     gini = gini * 100,
@@ -61,7 +61,7 @@ ggplot(df, aes(x = year, y = gini, color = countryname)) +
   scale_linetype_discrete() +
   guides(colour = FALSE,
          shape = FALSE,
-         linetype = guide_legend(override.aes = list(colour = c("black", "black", "black", "black", "#E69F00", "#56B4E9", "#56B4E9", "#56B4E9")))) +
+         linetype = guide_legend(override.aes = list(colour = c("black", "black", "#E69F00", "#56B4E9", "#56B4E9", "#56B4E9")))) +
   labs(
     x = "Year",
     y = "Gini index"

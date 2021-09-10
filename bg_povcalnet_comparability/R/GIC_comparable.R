@@ -26,7 +26,7 @@ names(dat_lkup) <- c("income","consumption")
 
 df <- pcn %>%
   inner_join(metadata, by = c("countrycode", "year", "coveragetype", "datatype")) %>%
-  filter(countrycode %in% country_list,
+  filter(#countrycode %in% country_list,
          year %in% year_range) %>%
   group_by(countrycode, comparability) %>%
   mutate(
